@@ -97,16 +97,23 @@ fetch(url, {
 }).then(response => {
     return response.json();
 }).then(json => {
-    displayResponse(json);
+    conversationHistory.push({
+        role: "assistant",
+        content: json.content[0].text 
+})
+userMessage.value = ""
+displayResponse();
 })
 // STEP 8d: Make the API request using fetch()
 }
 // STEP 8e: Handle the response
 function displayResponse(json) {
-    console.log(json);
-    let para = document.createElement("p");
-    para.textContent = json.content[0].text;
-    results.appendChild(para);
+   results.innerHTML = "";
+   conversationHistory.forEach(conversation => {
+    let messageDiv = document.createElement("div");
+    messageDiv.textContent = `${conversation.role === "user" ? "You" : "Claude"}: ${conversation.content}`;
+    results.appendChild(messageDiv);
+   })
 }
 
 
