@@ -18,7 +18,7 @@ const baseURL = "https://georgian.polaristechservices.com/api/claude";
 const studentApiKey = "200575872";
 // STEP 4: Set the maximum tokens for API requests
 const maxTokens = 1000;
-
+let conversationHistory = [];
 /* STEP 5: Reference the DOM elements you'll need to access */
 const userMessage = document.querySelector("#user-message");
 const sendMessageBtn = document.querySelector("#send-message");
@@ -71,7 +71,14 @@ function displayStatus(responseJson){
 /* STEP 8: Create the sendChatMessage function for Claude API interaction */
 function sendChatMessage(){
 // STEP 8a: Get form values
-let userInput = userMessage.value;
+let userInput = userMessage.value.trim();
+if (!userInput)
+    return;
+
+conversationHistory.push({
+    role: "user",
+    content: userInput
+});
 
 // STEP 8b: Create complete url
 let url = `${baseURL}/messages`;
@@ -85,13 +92,7 @@ fetch(url, {
     body: JSON.stringify( {
          "model": "claude-3-5-sonnet-20241022",
     "max_tokens": maxTokens,
-    "messages": 
-    [
-        {
-        "role": "user", 
-        "content": userInput
-        }
-     ]
+    "messages": conversationHistory
     })
 }).then(response => {
     return response.json();
